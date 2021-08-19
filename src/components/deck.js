@@ -1,25 +1,8 @@
-class Deck {
-    constructor() {
-        this.deck = this.newDeck();
-        this.burn = [];
-    }
+function Deck(){
+    this.deck = newDeck();
+    this.burn = [];
 
-    deal() {
-        if (this.deck.length) {
-            return this.deck.pop();
-        }
-        else {
-            this.shuffle(this.burn);
-            this.deck = this.burn;
-            this.burn = [];
-            return this.deck.pop();
-        }
-    }
-
-    get getDeck() {
-        return this.deck; //this.deck;
-    }
-    newDeck() {
+    function newDeck() {
         let suit = ["d", "c", "h", "s"];
         let value = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 
@@ -32,11 +15,11 @@ class Deck {
             }
         }
         
-        this.shuffle(deck);
+        shuffle(deck);
         return deck;
     }
 
-    shuffle(deck) {
+    function shuffle(deck) {
         for (let i = 0; i < 1000; i++) {
             let position1 = Math.floor((Math.random() * deck.length));
             let position2 = Math.floor((Math.random() * deck.length));
@@ -46,6 +29,27 @@ class Deck {
             deck[position2] = temp;
         }
     }
+
 }
+
+Deck.prototype.deal = function() {
+        if (this.deck.length) {
+            return this.deck.pop();
+        }
+        else {
+            this.shuffle(this.burn);
+            this.deck = this.burn;
+            this.burn = [];
+            return this.deck.pop();
+        }
+    }
+
+Deck.prototype.getDeck = function() {
+        return this.deck; //this.deck;
+    }
+    
+
+    
+
 
 export default Deck;
