@@ -1,7 +1,9 @@
 function Deck(){
     this.deck = newDeck();
     this.burn = [];
-
+    this.shuffle = function(deck) {
+        shuffle(deck);
+    }
     function newDeck() {
         let suit = ["d", "c", "h", "s"];
         let value = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
@@ -32,15 +34,21 @@ function Deck(){
 
 }
 
-Deck.prototype.deal = function() {
+Deck.prototype.deal = function(faceUp) {
         if (this.deck.length) {
-            return this.deck.pop();
+            let card = this.deck.pop();
+            this.burn.push(card);
+
+            return (faceUp)? {...card, faceUp: true} : {...card, faceUp: false};
         }
         else {
             this.shuffle(this.burn);
             this.deck = this.burn;
             this.burn = [];
-            return this.deck.pop();
+            let card = this.deck.pop();
+            this.burn.push(card);
+
+            return (faceUp)? {...card, faceUp: true} : {...card, faceUp: false};
         }
     }
 
