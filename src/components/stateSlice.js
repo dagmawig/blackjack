@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import Deck from './deck';
 
-// let deckInstance = new Deck();
+export let deckInstance = new Deck();
 const initialState = {
     // deckInstance: new Deck(),
-    deckArray: [],
+    deckArray: [...deckInstance.getDeck()],
     pot: { pot0: [], pot1: [] },
 };
 
@@ -12,9 +12,6 @@ export const stateSlice = createSlice({
     name: 'black',
     initialState,
     reducers: {
-        addDeck: (state, action) => {
-            state.deckInstance = action.payload;
-        },
         updateDeckArray: (state, action) => {
             state.deckArray = action.payload;
         },
@@ -24,6 +21,6 @@ export const stateSlice = createSlice({
     }
 });
 
-export const { addDeck, updateDeckArray, updatePot } = stateSlice.actions;
+export const { updateDeckArray, updatePot } = stateSlice.actions;
 
 export default stateSlice.reducer;

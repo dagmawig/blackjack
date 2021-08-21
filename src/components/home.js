@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import { addDeck, updateDeckArray, updatePot } from './stateSlice';
+import { updateDeckArray, updatePot, deckInstance } from './stateSlice';
 import './home.css';
 import Card from './card';
 import Deck from './deck';
@@ -13,18 +13,12 @@ function Home() {
     const dispatch = useDispatch();
      
    
-    let deckInstance = new Deck()
-    //dispatch(addDeck(new Deck()));
-    
-    //let deckArray = stateSelector.deckArray;
-    //dispatch(updateDeckArray(deckInstance.getDeck))
     let pot = stateSelector.pot;
     let deckArray = stateSelector.deckArray;
-    //dispatch(updateDeckArray(deckInstance.getDeck()));
     
     function deal() {
-        //pot[0].push(deckInstance.deal());
         dispatch(updatePot({ ...pot, pot0: pot.pot0.concat( [deckInstance.deal()] ) }))
+        dispatch(updateDeckArray([...deckInstance.getDeck()]))
         console.log(pot);
     }
 
@@ -33,7 +27,6 @@ function Home() {
                 <Card card={card} key={index+'card'} />
         )
     })
-    //console.log(deckInstance.getDeck())
     let pot0 = pot.pot0.map((card, i) => {
         return (
             <Card card={card} key={i+'p0card'} />
