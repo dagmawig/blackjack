@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import { updateDeckArray, updateHand, deckInstance } from './stateSlice';
+import { updateDeckArray, dealHand, deckInstance } from './stateSlice';
 import './home.css';
 import Card from './card';
 import Deck from './deck';
@@ -17,16 +17,10 @@ function Home() {
     let deckArray = stateSelector.deckArray;
     
     function deal() {
+        let cards = new Array(deckInstance.deal(true), deckInstance.deal(false), deckInstance.deal(true), deckInstance.deal(true));
+        dispatch(dealHand(cards))
 
-        dispatch(updateHand({ ...hand, handP1: hand.handP1.concat( [deckInstance.deal(true)] ) }))
-
-        dispatch(updateHand({ ...hand, handH: hand.handH.concat( [deckInstance.deal(false)] ) }))
-
-        dispatch(updateHand({ ...hand, handP1: hand.handP1.concat( [deckInstance.deal(true)] ) }))
-
-        dispatch(updateHand({ ...hand, handH: hand.handH.concat( [deckInstance.deal(true)] ) }))
-        
-        console.log(hand);
+        //console.log(hand);
     }
 
     let deck = deckArray.map((card, index) => {
@@ -55,11 +49,11 @@ function Home() {
         <div className="home_container">
             {deck}
             <button onClick={deal}>Deal</button>
-            <div className="potP">
-                {handP1}
-            </div>
             <div className="potH">
                 {handH}
+            </div>
+            <div className="potP">
+                {handP1}
             </div>
         </div>
     )
