@@ -48,7 +48,7 @@ function Home() {
     return (
         <div className="home_container">
             {deck}
-            <button onClick={deal}>Deal</button>
+            <button className="btn btn-info" onClick={deal}>Deal</button>
             <div className="potH">
                 {handH}
             </div>
