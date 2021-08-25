@@ -4,6 +4,7 @@ import { updateDeckArray, dealHand, deckInstance } from './stateSlice';
 import './home.css';
 import Card from './card';
 import Deck from './deck';
+import Bank from './bank';
 
 function Home() {
     // defining selector to import user state from redux store
@@ -55,6 +56,7 @@ function Home() {
             <div className="potP">
                 {handP1}
             </div>
+            <Bank bank={stateSelector.bank} pot={stateSelector.pot}/>
         </div>
     )
 }

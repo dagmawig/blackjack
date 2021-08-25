@@ -18,12 +18,16 @@ export const stateSlice = createSlice({
             state.deckArray = action.payload;
         },
         dealHand: (state, action) => {
-            state.hand = {...state.hand, handP1: [action.payload[0], action.payload[2]], handH: [action.payload[1], action.payload[3]] }
-            state.deckArray = [...deckInstance.getDeck()]
-        }
+            state.hand = {...state.hand, handP1: [action.payload[0], action.payload[2]], handH: [action.payload[1], action.payload[3]] };
+            state.deckArray = [...deckInstance.getDeck()];
+        },
+        updateBank: (state, action) => {
+            state.bank = action.payload.bank;
+            state.pot = action.payload.pot;
+        },
     }
 });
 
-export const { updateDeckArray, dealHand } = stateSlice.actions;
+export const { updateDeckArray, dealHand, updateBank } = stateSlice.actions;
 
 export default stateSlice.reducer;
