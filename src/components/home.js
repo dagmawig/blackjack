@@ -5,7 +5,7 @@ import './home.css';
 import Card from './card';
 import Deck from './deck';
 import Bank from './bank';
-
+import Pot from './pot';
 function Home() {
     // defining selector to import user state from redux store
     const stateSelector = useSelector((state) => state.black);
@@ -56,7 +56,8 @@ function Home() {
             <div className="potP">
                 {handP1}
             </div>
-            <Bank bank={stateSelector.bank} pot={stateSelector.pot}/>
+            <Pot bank={stateSelector.bank} pot={stateSelector.pot} pArray={stateSelector.pArray}/>
+            <Bank bank={stateSelector.bank} pot={stateSelector.pot} pArray={stateSelector.pArray}/>
         </div>
     )
 }

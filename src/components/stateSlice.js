@@ -8,6 +8,7 @@ const initialState = {
     hand: { handP1: [], handP2: [], handH: [] },
     bank: 900,
     pot: 100,
+    pArray: [100]
 };
 
 export const stateSlice = createSlice({
@@ -25,9 +26,12 @@ export const stateSlice = createSlice({
             state.bank = action.payload.bank;
             state.pot = action.payload.pot;
         },
+        updatePArray: (state, action) => {
+            state.pArray = action.payload;
+        }
     }
 });
 
-export const { updateDeckArray, dealHand, updateBank } = stateSlice.actions;
+export const { updateDeckArray, dealHand, updateBank, updatePArray } = stateSlice.actions;
 
 export default stateSlice.reducer;
