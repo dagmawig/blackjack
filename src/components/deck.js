@@ -16,9 +16,9 @@ function Deck(){
                 deck.push(card);
             }
         }
-        
-        shuffle(deck);
-        return deck;
+        let finalDeck = deck.concat(deck);
+        shuffle(finalDeck);
+        return finalDeck;
     }
 
     function shuffle(deck) {
