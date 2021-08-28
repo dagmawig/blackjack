@@ -1,0 +1,17 @@
+.pot-title {
+    text-align: right;
+    margin: 0;
+    padding: 0;
+}
+.pot-chip {
+padding: 0;
+margin: 0;
+}
+.empty-pot {
+    border: 2px solid red;
+    height: 75px;
+    width: 82.5px;
+    text-align: center;
+    line-height: 37.5px;
+    vertical-align: middle;
+}

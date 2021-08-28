@@ -1,0 +1,76 @@
+.home {
+    position:static;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    height: calc(100vh);
+    background-image: url("../images/background.png");
+    font-family: 'Courier New', Courier, monospace;
+    border: 2px solid black;
+    overflow: hidden;
+}
+.home-items {
+    padding: 5px;
+    color: white !important;
+    margin-bottom: 0;
+    height: 100%;
+}
+.deck-row {
+    display: flex;
+    width: 100%;
+    margin: 5px 0;
+    align-items: center;
+    justify-content: flex-end; 
+}
+.dealer-hand-row, .player-hand-row {
+    display: flex;
+    width: 100%;
+    margin: 5px 0px;
+    align-items: flex-start;
+    justify-content: center; 
+    height: 150px;
+    border: 2px solid red;
+}
+.action-row {
+    display: flex;
+    width: 100%;
+    margin: 5px 0;
+    align-items: center;
+    justify-content: flex-end; 
+}
+.pot-row {
+    display: flex;
+    width: 100%;
+    margin: 5px 0;
+    align-items: center;
+    justify-content: flex-start;
+}
+.footer {
+    position: sticky;
+    width: 100%;
+    padding: 10px;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    height: 170px;
+    justify-content: flex-end;
+    z-index: 20;
+    color: white !important;
+}
+.deck-pic {
+   width: 45px; 
+}
+.total-number {
+width: 40px;
+text-align: left;
+margin:0;
+padding: 0;
+font-size: 15pt;
+font-weight: bold;
+}
+.dealer-hand-title, .player-hand-title {
+    text-align: center;
+    font-size: 18pt;
+}
+.deal-hand-card {
+}
