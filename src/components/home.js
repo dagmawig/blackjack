@@ -48,7 +48,14 @@ function Home() {
   
     return (
         <div className="home_container">
-            {deck}
+            <div className="deck-count row">
+                <div className="total-number col-4">
+                    {deckArray.length}
+                </div>
+                <div className="deck-pic col-4">
+                    <img alt="deck dummy" width={25} height={35} src={"/images/dummy.png"}/>
+                </div>
+            </div>
             <button className="btn btn-info" onClick={deal}>Deal</button>
             <div className="potH">
                 {handH}
