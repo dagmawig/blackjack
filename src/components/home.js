@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateDeckArray, dealHand, deckInstance } from './stateSlice';
+import { updateDeckArray, dealHand, deckInstance, updateStatus } from './stateSlice';
 import './home.css';
 import Card from './card';
 import Deck from './deck';
@@ -16,11 +16,45 @@ function Home() {
 
     let hand = stateSelector.hand;
     let deckArray = stateSelector.deckArray;
+    let gameStatus = stateSelector.gameStatus;
+
+    function getVal(cardArr) {
+
+        let hasAce = cardArr.some(card => {
+            return card.num === 1;
+        })
+        console.log(hasAce)
+        let minVal = cardArr.reduce((prev, curr) => {
+            return {num: prev.num + curr.num};
+        })
+
+        if(!hasAce) return minVal.num;
+        else {
+            let seenAce = false;
+            let maxVal = cardArr.reduce((prev, curr, index) => {
+                if(index===1 && prev.num===1) {
+                    seenAce = true;
+                    return {num: 11 + curr.num};
+                }
+                if(curr.num !==1 || seenAce) return {num: prev.num + curr.num};
+                else {
+                    seenAce = true;
+                    return {num: prev.num + 11};
+                }
+            });
+            console.log(maxVal)
+            return (maxVal.num<=21)? maxVal.num : minVal.num;
+        }
+    }
+
+    function sameVal (hand) {
+        return hand[0].num === hand[1].num;
+    }
 
     function deal() {
         let cards = new Array(deckInstance.deal(true), deckInstance.deal(false), deckInstance.deal(true), deckInstance.deal(true));
         dispatch(dealHand(cards))
-
+        dispatch(updateStatus({...gameStatus, deal: true}));
         //console.log(hand);
     }
 

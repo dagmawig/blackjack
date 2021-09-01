@@ -7,12 +7,12 @@ function Deck(){
     function newDeck() {
         let suit = ["d", "c", "h", "s"];
         let value = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
-
+        let num = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
         let deck = [];
 
         for (let i = 0; i < suit.length; i++) {
             for (let j = 0; j < value.length; j++) {
-                let card = { value: value[j], suit: suit[i] };
+                let card = { value: value[j], suit: suit[i], num: num[j] };
                 deck.push(card);
             }
         }
