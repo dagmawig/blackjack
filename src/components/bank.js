@@ -53,7 +53,7 @@ function Bank(props) {
         <>
             <div className="bank-total col-4">
                 <div className="bank-total-text">
-                    Bank: ${bank}
+                    <b>Bank:</b> ${bank}
                 </div>
                 <div className="bank-all-in">
                     {(bank > 0) ? (<button className="all-in-button btn btn-success" onClick={allIn}>

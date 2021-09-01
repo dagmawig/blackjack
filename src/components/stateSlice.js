@@ -11,6 +11,7 @@ const initialState = {
     pArray: [100],
     gameStatus: {
         deal: false,
+        split: undefined,
     }
 };
 

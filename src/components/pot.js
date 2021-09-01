@@ -17,7 +17,7 @@ function Pot(props) {
     return (
         <>
             <div className="pot-title col-6">
-                Pot: ${pot}
+                <b>Pot:</b> ${pot}
             </div>
             {(pArray.length) ? (<div className="pot-chip col-6">
                 <input type="image" src={"/images/" + chip + ".png"} width={width} height={height} value={chip} onClick={remove} className="chip btn"></input>

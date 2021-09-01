@@ -22,12 +22,21 @@
     align-items: center;
     justify-content: flex-end; 
 }
-.dealer-hand-row, .player-hand-row {
+.dealer-hand-row {
+    display: flex;
+    width: 100%;
+    margin: 5px 0px;
+    align-items: center;
+    justify-content: center; 
+    height: 150px;
+    border: 2px solid red;
+}
+.player-hand-row {
     display: flex;
     width: 100%;
     margin: 5px 0px;
     align-items: flex-start;
-    justify-content: center; 
+    justify-content: space-between; 
     height: 150px;
     border: 2px solid red;
 }
@@ -36,14 +45,14 @@
     width: 100%;
     margin: 5px 0;
     align-items: center;
-    justify-content: flex-end; 
+    justify-content: space-evenly; 
 }
 .pot-row {
     display: flex;
     width: 100%;
     margin: 5px 0;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-around;
 }
 .footer {
     position: sticky;
@@ -72,5 +81,10 @@ font-weight: bold;
     text-align: center;
     font-size: 18pt;
 }
-.deal-hand-card {
+.splt-btn {
+    margin-top: 5px;
+}
+.dealer-cards {
+    display: table;
+    margin: auto;
 }

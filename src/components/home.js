@@ -25,36 +25,36 @@ function Home() {
         })
         console.log(hasAce)
         let minVal = cardArr.reduce((prev, curr) => {
-            return {num: prev.num + curr.num};
+            return { num: prev.num + curr.num };
         })
 
-        if(!hasAce) return minVal.num;
+        if (!hasAce) return minVal.num;
         else {
             let seenAce = false;
             let maxVal = cardArr.reduce((prev, curr, index) => {
-                if(index===1 && prev.num===1) {
+                if (index === 1 && prev.num === 1) {
                     seenAce = true;
-                    return {num: 11 + curr.num};
+                    return { num: 11 + curr.num };
                 }
-                if(curr.num !==1 || seenAce) return {num: prev.num + curr.num};
+                if (curr.num !== 1 || seenAce) return { num: prev.num + curr.num };
                 else {
                     seenAce = true;
-                    return {num: prev.num + 11};
+                    return { num: prev.num + 11 };
                 }
             });
             console.log(maxVal)
-            return (maxVal.num<=21)? maxVal.num : minVal.num;
+            return (maxVal.num <= 21) ? maxVal.num : minVal.num;
         }
     }
 
-    function sameVal (hand) {
+    function sameVal(hand) {
         return hand[0].num === hand[1].num;
     }
 
     function deal() {
         let cards = new Array(deckInstance.deal(true), deckInstance.deal(false), deckInstance.deal(true), deckInstance.deal(true));
         dispatch(dealHand(cards))
-        dispatch(updateStatus({...gameStatus, deal: true}));
+        dispatch(updateStatus({ ...gameStatus, deal: true }));
         //console.log(hand);
     }
 
@@ -95,27 +95,41 @@ function Home() {
                     <div className="dealer-hand-title col-12">
                         DEALER'S HAND
                     </div>
-                    <div className="dealer-hand-card col-12">
-                        {handH}
+                    <div className="dealer-hand-card col-6">
+                        <div className="dealer-cards" style={{width: 61.5+(hand.handH.length-1)*11.5}}>{handH}</div>
+                        
                     </div>
                 </div>
                 <div className="player-hand-row row">
                     <div className="player-hand-title col-12">
                         PLAYER'S HAND
                     </div>
-                    <div className="player-hand-card col-12">
+                    <div className="player-hand-card col-6">
                         {handP1}
                     </div>
                 </div>
                 <div className="action-row row">
-                    <button className="btn btn-info" onClick={deal}>Deal</button>
+                    {(!gameStatus.deal) ? (<button className="btn btn-info col-3" onClick={deal}>Deal</button>) :
+                        ((stateSelector.pot <= stateSelector.bank) ?
+                            (<><button className="btn btn-success col-3" ><i className="fa fa-plus-square-o" aria-hidden="true"></i> Hit</button> <button className="btn btn-success col-4" >(2X)Double </button> <button className="btn btn-success col-4" ><i className="fa fa-hand-paper-o" aria-hidden="true"></i> Stand </button></>) :
+                            <><button className="btn btn-success col-3" ><i className="fa fa-plus-square-o" aria-hidden="true"></i> Hit</button><button className="btn btn-success col-4" ><i className="fa fa-hand-paper-o" aria-hidden="true"></i> Stand </button></>)}
+                            {(gameStatus.deal && sameVal(hand.handP1) && gameStatus.split === undefined)? <button className="splt-btn btn btn-success col-7" >Split</button> : null}
                 </div>
                 <div className="pot-row row">
-                    <Pot bank={stateSelector.bank} pot={stateSelector.pot} pArray={stateSelector.pArray} />
+                    {(!gameStatus.deal) ? (<Pot bank={stateSelector.bank} pot={stateSelector.pot} pArray={stateSelector.pArray} />) :
+                        <>
+                            <div className="pot-title col-4">
+                            <b>Pot:</b> ${stateSelector.pot}
+                            </div>
+                            <div className="bank-total-text col-4">
+                            <b>Bank:</b> ${stateSelector.bank}
+                            </div>
+                        </>}
                 </div>
             </div>
             <div className="footer row">
-                <Bank bank={stateSelector.bank} pot={stateSelector.pot} pArray={stateSelector.pArray} />
+                {(!gameStatus.deal) ? (<Bank bank={stateSelector.bank} pot={stateSelector.pot} pArray={stateSelector.pArray} />) :
+                   null}
             </div>
         </div>
     )
