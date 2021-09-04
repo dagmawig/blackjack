@@ -1,4 +1,4 @@
-import { updateBank, updatePot, updatePArray } from './stateSlice';
+import { updateBank, updatePot1, updatePArray } from './stateSlice';
 import { useDispatch } from 'react-redux';
 import './bank.css';
 
@@ -40,17 +40,17 @@ function Bank(props) {
     function bet(e) {
         let betMoney = parseInt(e.currentTarget.value);
         dispatch(updateBank(bank - betMoney));
-        dispatch(updatePot(pot + betMoney))
+        dispatch(updatePot1(pot + betMoney))
         dispatch(updatePArray([...pArray, betMoney]))
     }
     function allIn() {
         dispatch(updateBank(0));
-        dispatch(updatePot(pot + bank))
+        dispatch(updatePot1(pot + bank))
         dispatch(updatePArray(getArray(pot + bank)));
     }
     function clearBet() {
         dispatch(updateBank(bank + pot));
-        dispatch(updatePot(0));
+        dispatch(updatePot1(0));
         dispatch(updatePArray([]));
     }
 

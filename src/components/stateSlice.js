@@ -7,13 +7,13 @@ const initialState = {
     deckArray: [...deckInstance.getDeck()],
     hand: { handP1: [], handP2: [], handH: [] },
     bank: 900,
-    pot: 100,
+    pot1: 100,
     pot2: 0,
     pArray: [100],
     gameStatus: {
         deal: false,
         split: false,
-        hand: 0,
+        hand: 1,
     }
 };
 
@@ -31,8 +31,8 @@ export const stateSlice = createSlice({
         updateBank: (state, action) => {
             state.bank = action.payload;   
         },
-        updatePot: (state, action) => {
-            state.pot = action.payload;   
+        updatePot1: (state, action) => {
+            state.pot1 = action.payload;   
         },
         updatePot2: (state, action) => {
             state.pot2 = action.payload;   
@@ -62,6 +62,6 @@ export const stateSlice = createSlice({
     }
 });
 
-export const { updateDeckArray, dealHand, updateBank, updatePArray, updateStatus, updateSplit, updateHand, updatePot, updatePot2, resetState, flipCard } = stateSlice.actions;
+export const { updateDeckArray, dealHand, updateBank, updatePArray, updateStatus, updateSplit, updateHand, updatePot1, updatePot2, resetState, flipCard } = stateSlice.actions;
 
 export default stateSlice.reducer;
