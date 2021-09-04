@@ -1,6 +1,31 @@
-import { updateBank, updatePArray } from './stateSlice';
+import { updateBank, updatePot, updatePArray } from './stateSlice';
 import { useDispatch } from 'react-redux';
 import './bank.css';
+
+export let getArray = (money) =>{
+
+    let hundreds = Math.floor(money / 100);
+    money -= hundreds * 100;
+    let fiftys = Math.floor(money / 50);
+    money -= fiftys * 50;
+    let twentyfives = Math.floor(money / 25);
+    money -= twentyfives * 25;
+    let fives = Math.floor(money / 5);
+    money -= fives * 5;
+    let ones = money;
+
+    let mArray = [];
+    let chips = [hundreds, fiftys, twentyfives, fives, ones];
+    let value = [100, 50, 25, 5, 1];
+
+    for (let i = 0; i < chips.length; i++) {
+        for (let j = 0; j < chips[i]; j++) {
+            mArray.push(value[i]);
+        }
+    }
+
+    return mArray;
+}
 
 function Bank(props) {
     let dispatch = useDispatch();
@@ -10,42 +35,22 @@ function Bank(props) {
     let pArray = props.pArray;
     let width = 82.5;
     let height = 75;
-    function getArray(money) {
-
-        let hundreds = Math.floor(money / 100);
-        money -= hundreds * 100;
-        let fiftys = Math.floor(money / 50);
-        money -= fiftys * 50;
-        let twentyfives = Math.floor(money / 25);
-        money -= twentyfives * 25;
-        let fives = Math.floor(money / 5);
-        money -= fives * 5;
-        let ones = money;
-
-        let mArray = [];
-        let chips = [hundreds, fiftys, twentyfives, fives, ones];
-        let value = [100, 50, 25, 5, 1];
-
-        for (let i = 0; i < chips.length; i++) {
-            for (let j = 0; j < chips[i]; j++) {
-                mArray.push(value[i]);
-            }
-        }
-
-        return mArray;
-    }
+    
 
     function bet(e) {
         let betMoney = parseInt(e.currentTarget.value);
-        dispatch(updateBank({ bank: bank - betMoney, pot: pot + betMoney }));
+        dispatch(updateBank(bank - betMoney));
+        dispatch(updatePot(pot + betMoney))
         dispatch(updatePArray([...pArray, betMoney]))
     }
     function allIn() {
-        dispatch(updateBank({ bank: 0, pot: pot + bank }));
+        dispatch(updateBank(0));
+        dispatch(updatePot(pot + bank))
         dispatch(updatePArray(getArray(pot + bank)));
     }
     function clearBet() {
-        dispatch(updateBank({ bank: bank + pot, pot: 0 }));
+        dispatch(updateBank(bank + pot));
+        dispatch(updatePot(0));
         dispatch(updatePArray([]));
     }
 
