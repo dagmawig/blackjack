@@ -1,26 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateDeckArray, dealHand, deckInstance, updateStatus, updateSplit, updateHand, updatePot1, updatePot2, resetState, updatePArray, flipCard, updateBank } from './stateSlice';
+import { updateDeckArray, dealHand, deckInstance, updateStatus, updateSplit, updateHand, updatePot1, updatePot2, resetState, updatePArray, flipCard, updateBank, asyncBank } from './stateSlice';
+import { updateNewBank } from '../redux/ActionCreators';
 import './home.css';
 import Card from './card';
 import Deck from './deck';
 import Bank from './bank';
 import Pot from './pot';
 import { getArray } from './bank';
+import { ConfigureStore } from '../redux/configureStore';
+
+
+
+const store = ConfigureStore();
 
 function Double(props) {
     let pots = props.pots;
-    if(pots[props.hand] <= props.bank) {
+    if (pots[props.hand] <= props.bank) {
         return (
-            <button className="btn btn-success col-4" >(2X)Double </button> 
+            <button className="btn btn-success col-4" >(2X)Double </button>
         )
     }
     else return null;
 }
 function Action(props) {
-    if(props.deal) {
+    if (props.deal) {
         return (
-            <><button className="btn btn-success col-3" ><i className="fa fa-plus-square-o" aria-hidden="true"></i> Hit</button> <Double pots={props.pots} hand={props.hand} bank={props.bank} /> <button className="btn btn-success col-4" ><i className="fa fa-hand-paper-o" aria-hidden="true"></i> Stand </button></>
+            <><button className="btn btn-success col-3" onClick={props.hit}><i className="fa fa-plus-square-o" aria-hidden="true"></i> Hit</button> <Double pots={props.pots} hand={props.hand} bank={props.bank} /> <button className="btn btn-success col-4" ><i className="fa fa-hand-paper-o" aria-hidden="true"></i> Stand </button></>
         )
     }
     else return null;
@@ -41,7 +47,6 @@ function Home() {
         let hasAce = cardArr.some(card => {
             return card.num === 1;
         })
-        console.log(hasAce)
         let minVal = cardArr.reduce((prev, curr) => {
             return { num: prev.num + curr.num };
         })
@@ -60,7 +65,6 @@ function Home() {
                     return { num: prev.num + 11 };
                 }
             });
-            console.log(maxVal)
             return (maxVal.num <= 21) ? maxVal.num : minVal.num;
         }
     }
@@ -71,14 +75,18 @@ function Home() {
     function isSplit() {
         return gameStatus.deal && gameStatus.split === false && bank >= pot1 && hand.handP1.length === 2 && hand.handP2.length === 0 /*&& sameVal(hand.handP1)*/;
     }
+    async function dealHand2(load) {
+        dispatch(updateBank(load))
+    }
 
     function deal() {
         if (deckArray.length < 56) dispatch(updateDeckArray([...deckInstance.getDeck()]));
-
-        let cards = new Array(deckInstance.deal(true), deckInstance.deal(false), deckInstance.deal(true), deckInstance.deal(true));
-        dispatch(dealHand(cards));
-        dispatch(updateStatus({ ...gameStatus, deal: true }));
-        //console.log(hand);
+        dealHand2(12345);
+        console.log(bank)
+        // let cards = new Array(deckInstance.deal(true), deckInstance.deal(false), deckInstance.deal(true), deckInstance.deal(true));
+        // dispatch(dealHand(cards));
+        // dispatch(updateStatus({ ...gameStatus, deal: true }));
+        // console.log(hand, cards);
     }
 
     function split() {
@@ -150,7 +158,7 @@ function Home() {
         dispatch(flipCard());
         let handHVal = getVal(hand.handH);
         let handP1Val = getVal(hand.handP1);
-        let handP2Val = getVal(hand.handP2);
+        let handP2Val = (hand.handP2.length) ? getVal(hand.handP2) : 0;
 
         if (gameStatus.split) {
             if (pot1 === 0) {
@@ -176,7 +184,7 @@ function Home() {
             if (gameStatus.hand === 1) {
                 let newHand = hand.handP1.concat([deckInstance.deal(true)]);
                 dispatch(updateHand({ ...hand, handP1: newHand }));
-
+                
                 if (getVal(newHand) > 21) {
                     alert(`Hand 1 BUST! You lose $${pot1}!`);
                     dispatch(updatePot1(0));
@@ -210,7 +218,8 @@ function Home() {
         else if (gameStatus.split === false) {
             let newHand = hand.handP1.concat([deckInstance.deal(true)]);
             dispatch(updateHand({ ...hand, handP1: newHand }));
-
+            console.log(hand.handP1)
+            alert("wait")
             if (getVal(newHand) > 21) {
                 alert(`Hand 1 BUST! You lose $${pot1}!`);
                 dispatch(updatePot1(0));
@@ -246,7 +255,7 @@ function Home() {
             <Card card={card} key={i + 'p1card'} />
         )
     })
-    
+
     return (
         <div className="home container">
             <div className="home-items">
@@ -280,7 +289,7 @@ function Home() {
                 </div>
                 <div className="action-row row">
                     {(!gameStatus.deal && pot1) ? (<button className="btn btn-info col-3" onClick={deal}>Deal</button>) : null}
-                    <Action pots={{1: pot1, 2: pot2}} hand={gameStatus.hand} bank={bank} deal={gameStatus.deal} />
+                    <Action pots={{ 1: pot1, 2: pot2 }} hand={gameStatus.hand} bank={bank} deal={gameStatus.deal} hit={hit} />
                     {(isSplit()) ? <button className="splt-btn btn btn-success col-7" onClick={split} >Split</button> : null}
                 </div>
                 <div className="pot-row row">

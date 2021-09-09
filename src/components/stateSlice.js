@@ -1,5 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { useDispatch } from 'react-redux';
 import Deck from './deck';
+
+
 
 export let deckInstance = new Deck();
 const initialState = {
@@ -16,6 +19,18 @@ const initialState = {
         hand: 1,
     }
 };
+
+export const asyncBank = createAsyncThunk(
+    'black/asyncBank',
+    async (load, thunkAPI) => {
+        return new Promise ((resolve, reject) => {
+            thunkAPI.dispatch(updateBank(load));
+            resolve();
+        })
+        
+        
+    }
+)
 
 export const stateSlice = createSlice({
     name: 'black',
@@ -59,6 +74,11 @@ export const stateSlice = createSlice({
         resetState: (state, action) => {
             state = initialState;
         }
+    },
+    extraReducers(builder) {
+        builder.addCase(asyncBank.fulfilled, (state, action) => {
+            //state.bank = action.payload;
+        })
     }
 });
 
