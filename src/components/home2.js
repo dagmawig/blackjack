@@ -52,6 +52,25 @@ class Home2 extends React.Component {
         this.compareHand = this.compareHand.bind(this);
         this.revealHand = this.revealHand.bind(this);
         this.hit = this.hit.bind(this);
+        this.bet = this.bet.bind(this);
+        this.allIn = this.allIn.bind(this);
+        this.clearBet = this.clearBet.bind(this);
+        this.remove = this.remove.bind(this);
+    }
+
+    bet(e) {
+        let betMoney = parseInt(e.currentTarget.value);
+        this.setState((state, props)=> ({...state, bank: (state.bank-betMoney), pot1: (state.pot1+betMoney), pArray: [...state.pArray, betMoney]}));
+    }
+    allIn() {
+        this.setState((state, props)=> ({...state, bank: 0, pot1: (state.pot1+state.bank), pArray: getArray(state.pot1+state.bank)}));
+    }
+    clearBet() {
+        this.setState((state, props)=> ({...state, bank: (state.pot1+state.bank), pot1: 0, pArray: []}));
+    }
+    remove() {
+        let chip = this.state.pArray[this.state.pArray.length - 1];
+        this.setState((state, props)=> ({...state, bank: (chip+state.bank), pot1: (state.pot1-chip), pArray: state.pArray.slice(0,-1)}));
     }
 
     getVal(cardArr) {
@@ -312,7 +331,7 @@ class Home2 extends React.Component {
                         {(this.isSplit()) ? <button className="splt-btn btn btn-success col-7" onClick={this.split} >Split</button> : null}
                     </div>
                     <div className="pot-row row">
-                        {(!this.state.gameStatus.deal) ? (<Pot bank={this.state.bank} pot={this.state.pot1} pArray={this.state.pArray} />) :
+                        {(!this.state.gameStatus.deal) ? (<Pot bank={this.state.bank} pot={this.state.pot1} pArray={this.state.pArray} remove={this.remove} />) :
                             <>
                                 <div className="pot-title col-4">
                                     <b>Pot:</b> ${this.state.pot1 + this.state.pot2}
@@ -324,7 +343,7 @@ class Home2 extends React.Component {
                     </div>
                 </div>
                 <div className="footer row">
-                    {(!this.state.gameStatus.deal) ? (<Bank bank={this.state.bank} pot={this.state.pot1} pArray={this.state.pArray} />) :
+                    {(!this.state.gameStatus.deal) ? (<Bank bank={this.state.bank} pot={this.state.pot1} pArray={this.state.pArray} allIn={this.allIn} clearBet={this.clearBet} bet={this.bet} />) :
                         null}
                 </div>
             </div>

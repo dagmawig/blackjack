@@ -1,20 +1,13 @@
-import { updateBank, updatePArray, updatePot1 } from './stateSlice';
-import { useDispatch } from 'react-redux';
 import './pot.css';
 function Pot(props) {
-    let dispatch = useDispatch();
 
-    let bank = props.bank;
     let pot = props.pot;
     let pArray = props.pArray;
     let chip = pArray[pArray.length - 1];
     let width = 82.5;
     let height = 75;
-    function remove() {
-        dispatch(updateBank(bank + chip));
-        dispatch(updatePot1(pot - chip))
-        dispatch(updatePArray(pArray.slice(0, -1)));
-    }
+    let remove = props.remove;
+    
     return (
         <>
             <div className="pot-title col-6">
