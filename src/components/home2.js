@@ -6,7 +6,6 @@ import Bank from './bank';
 import Pot from './pot';
 import { getArray } from './bank';
 
-let deckInstance = new Deck();
 
 function Double(props) {
     let pots = props.pots;
@@ -27,7 +26,7 @@ function Action(props) {
 }
 
 let initialState = {
-    deckArray: [...deckInstance.getDeck()],
+    deckInstance: new Deck(),
     hand: { handP1: [], handP2: [], handH: [] },
     bank: 900,
     pot1: 100,
@@ -43,19 +42,7 @@ let initialState = {
 class Home2 extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {
-            deckArray: [...deckInstance.getDeck()],
-            hand: { handP1: [], handP2: [], handH: [] },
-            bank: 900,
-            pot1: 100,
-            pot2: 0,
-            pArray: [100],
-            gameStatus: {
-                deal: false,
-                split: false,
-                hand: 1,
-            }
-        }
+        this.state = initialState;
         this.deal = this.deal.bind(this);
         this.getVal = this.getVal.bind(this);
         this.sameVal = this.sameVal.bind(this);
@@ -103,21 +90,26 @@ class Home2 extends React.Component {
     }
 
     deal() {
-        if (this.state.deckArray.length < 56) this.setState((state, props) => ({ ...state, deckArray: [...deckInstance.getDeck()] }));
 
-        let cards = new Array(deckInstance.deal(true), deckInstance.deal(false), deckInstance.deal(true), deckInstance.deal(true));
+        let cards = new Array(this.state.deckInstance.deal(true), this.state.deckInstance.deal(false), this.state.deckInstance.deal(true), this.state.deckInstance.deal(true));
 
-        this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [cards[0], cards[2]], handH: [cards[1], cards[3]] }, deckArray: [...deckInstance.getDeck()], gameStatus: { ...state.gameStatus, deal: true } }))
+        this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [cards[0], cards[2]], handH: [cards[1], cards[3]] }, gameStatus: { ...state.gameStatus, deal: true } }))
 
     }
 
     split() {
+        
         let newHand = { ...this.state.hand, handP1: [this.state.hand.handP1[0]], handP2: [this.state.hand.handP1[1]] };
         let newBank = this.state.bank - this.state.pot1;
         let newPot = this.state.pot1;
         let newPArray = this.state.pArray.concat(getArray(this.state.pot1));
 
-        this.setState((state, props) => ({ ...state, hand: newHand, bank: newBank, pot2: newPot, pArray: newPArray, gameStatus: { ...state.gameStatus, split: true } }))
+        this.setState((state, props) => ({ ...state, hand: newHand, bank: newBank, pot2: newPot, pArray: newPArray, gameStatus: { ...state.gameStatus, split: true } }), ()=> {
+            setTimeout(() => {
+                let newCard = this.state.deckInstance.deal(true);
+                this.setState((state, props)=> ({...state, hand: {...state.hand, handP1: [...state.hand.handP1, newCard]}}))
+            }, 500)
+        })
     }
 
     nextRound() {
@@ -140,7 +132,7 @@ class Home2 extends React.Component {
         }
         else {
             if (dealerVal < 17) {
-                let newHand = this.state.hand.handH.concat([deckInstance.deal(true)]);
+                let newHand = this.state.hand.handH.concat([this.state.deckInstance.deal(true)]);
                 this.setState((state, props) => ({ ...state, hand: { ...state.hand, handH: newHand } }), () => {
                     let newDealerVal = this.getVal(newHand);
                     if (newDealerVal > 21) {
@@ -199,27 +191,29 @@ class Home2 extends React.Component {
     hit() {
         if (this.state.gameStatus.split) {
             if (this.state.gameStatus.hand === 1) {
-                let newHand = this.state.hand.handP1.concat([deckInstance.deal(true)]);
+                let newHand = this.state.hand.handP1.concat([this.state.deckInstance.deal(true)]);
                 this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: newHand } }), () => {
                     console.log(this.state.hand.handP1)
                     if (this.getVal(newHand) > 21) {
                         setTimeout(() => {
                             alert(`Hand 1 BUST! You lose $${this.state.pot1}!`);
-                            this.setState((state, props) => ({ ...state, pot1: 0, gameStatus: { ...state.gameStatus, hand: 2 } }))
+                            let newCard = this.state.deckInstance.deal(true);
+                            this.setState((state, props) => ({ ...state, pot1: 0, gameStatus: { ...state.gameStatus, hand: 2 }, hand: {...state.hand, handP2: [...state.hand.handP2, newCard]} }))
                         }, 500)
 
                     }
                     else if (this.getVal(newHand) === 21) {
                         setTimeout(() => {
                             alert(`You hit 21!`);
-                            this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2 } }), 500)
+                            let newCard = this.state.deckInstance.deal(true);
+                            this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2 }, hand: {...state.hand, handP2: [...state.hand.handP2, newCard]} }), 500)
                         })
                     }
                 });
 
             }
             else if (this.state.gameStatus.hand === 2) {
-                let newHand2 = this.state.hand.handP2.concat([deckInstance.deal(true)]);
+                let newHand2 = this.state.hand.handP2.concat([this.state.deckInstance.deal(true)]);
                 this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP2: newHand2 } }), () => {
                     if (this.getVal(newHand2) > 21) {
                         setTimeout(() => {
@@ -243,7 +237,7 @@ class Home2 extends React.Component {
             }
         }
         else if (this.state.gameStatus.split === false) {
-            let newHand = this.state.hand.handP1.concat([deckInstance.deal(true)]);
+            let newHand = this.state.hand.handP1.concat([this.state.deckInstance.deal(true)]);
             this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: newHand } }), () => {
                 if (this.getVal(newHand) > 21) {
                     setTimeout(() => {
@@ -265,12 +259,6 @@ class Home2 extends React.Component {
 
     render() {
 
-        let deck = this.state.deckArray.map((card, index) => {
-            let cardM = { ...card, faceUp: true }
-            return (
-                <Card card={cardM} key={index + 'card'} />
-            )
-        });
         let handP1 = this.state.hand.handP1.map((card, i) => {
             return (
                 <Card card={card} key={i + 'p0card'} />
@@ -295,7 +283,7 @@ class Home2 extends React.Component {
                             <img alt="deck dummy" width={30} height={35} src={"/images/dummy.png"} />
                         </div>
                         <div className="total-number col-3" style={{ color: "white" }}>
-                            {this.state.deckArray.length}
+                            {this.state.deckInstance.getDeck().length}
                         </div>
                     </div>
                     <div className="dealer-hand-row row">
