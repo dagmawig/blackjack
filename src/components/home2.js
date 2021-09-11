@@ -110,11 +110,19 @@ class Home2 extends React.Component {
     }
 
     deal() {
+        if (this.state.deckInstance.getDeck().length < 56) {
+            this.setState((state, props) => ({ ...state, deckInstance: new Deck() }), () => {
+                let cards = new Array(this.state.deckInstance.deal(true), this.state.deckInstance.deal(false), this.state.deckInstance.deal(true), this.state.deckInstance.deal(true));
 
-        let cards = new Array(this.state.deckInstance.deal(true), this.state.deckInstance.deal(false), this.state.deckInstance.deal(true), this.state.deckInstance.deal(true));
+                this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [cards[0], cards[2]], handH: [cards[1], cards[3]] }, gameStatus: { ...state.gameStatus, deal: true } }))
+            })
+        }
+        else {
+            let cards = new Array(this.state.deckInstance.deal(true), this.state.deckInstance.deal(false), this.state.deckInstance.deal(true), this.state.deckInstance.deal(true));
 
-        this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [cards[0], cards[2]], handH: [cards[1], cards[3]] }, gameStatus: { ...state.gameStatus, deal: true } }))
+            this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [cards[0], cards[2]], handH: [cards[1], cards[3]] }, gameStatus: { ...state.gameStatus, deal: true } }))
 
+        }
     }
 
     split() {
@@ -142,44 +150,60 @@ class Home2 extends React.Component {
         }
     }
 
-    compareHand(playerVal, dealerVal, handNum) {
+    async compareHand(playerVal, dealerVal, handNum) {
         let pots = { 1: this.state.pot1, 2: this.state.pot2 };
         let actions = { 1: "1", 2: "2" };
+        let P = await new Promise((resolve) => {
+            if (dealerVal > playerVal) {
+                alert(`Dealer wins against Hand${handNum}! You lose $${pots[handNum]}!`);
+                this.setState((state, props) => ({ ...state, ["pot" + actions[handNum]]: 0 }));
 
-        if (dealerVal > playerVal) {
-            alert(`Dealer wins against Hand${handNum}! You lose $${pots[handNum]}!`);
-            this.setState((state, props) => ({ ...state, ["pot" + actions[handNum]]: 0 }))
-        }
-        else {
-            if (dealerVal < 17) {
-                let newHand = this.state.hand.handH.concat([this.state.deckInstance.deal(true)]);
-                this.setState((state, props) => ({ ...state, hand: { ...state.hand, handH: newHand } }), () => {
-                    setTimeout(() => {
-                        let newDealerVal = this.getVal(newHand);
-                        if (newDealerVal > 21) {
-                            alert(`Dealer BUST! You win $${pots[handNum]} for Hand ${handNum}!`);
-                            let newBank = this.state.bank + (2 * pots[handNum]);
-                            this.setState((state, props) => ({ ...state, bank: newBank, ["pot" + actions[handNum]]: 0 }))
-                        }
-                        else {
-                            this.compareHand(playerVal, newDealerVal, handNum);
-                        }
-                    }, 500)
-
-                });
-
-            }
-            else if (dealerVal === playerVal) {
-                alert(`It's a push/tie for Hand ${handNum}! You keep $${pots[handNum]}!`);
-                let newBank = this.state.bank + pots[handNum];
-                this.setState((state, props) => ({ ...state, bank: newBank, ["pot" + actions[handNum]]: 0 }))
+                return resolve("loss");
             }
             else {
-                alert(`You win $${pots[handNum]} for Hand ${handNum}!`);
-                let newBank = this.state.bank + (2 * pots[handNum]);
-                this.setState((state, props) => ({ ...state, bank: newBank, ["pot" + actions[handNum]]: 0 }))
+                if (dealerVal < 17) {
+                    let newHand = this.state.hand.handH.concat([this.state.deckInstance.deal(true)]);
+                    this.setState((state, props) => ({ ...state, hand: { ...state.hand, handH: newHand } }), () => {
+                        setTimeout(() => {
+                            let newDealerVal = this.getVal(newHand);
+                            if (newDealerVal > 21) {
+                                alert(`Dealer BUST! You win $${pots[handNum]} for Hand ${handNum}!`);
+                                let newBank = this.state.bank + (2 * pots[handNum]);
+                                this.setState((state, props) => ({ ...state, bank: newBank, ["pot" + actions[handNum]]: 0 }));
+
+                                return resolve("dealer bust you win");
+                            }
+                            else {
+                                return resolve(this.compareHand(playerVal, newDealerVal, handNum));
+                            }
+                        }, 500)
+
+                    });
+
+                }
+                else if (dealerVal === playerVal) {
+                    alert(`It's a push/tie for Hand ${handNum}! You keep $${pots[handNum]}!`);
+                    let newBank = this.state.bank + pots[handNum];
+                    this.setState((state, props) => ({ ...state, bank: newBank, ["pot" + actions[handNum]]: 0 }));
+
+                    return resolve("tie");
+                }
+                else {
+                    alert(`You win $${pots[handNum]} for Hand ${handNum}!`);
+                    let newBank = this.state.bank + (2 * pots[handNum]);
+                    this.setState((state, props) => ({ ...state, bank: newBank, ["pot" + actions[handNum]]: 0 }));
+
+                    return resolve("win");
+
+                }
             }
-        }
+        })
+
+        return P;
+
+        // await new Promise(resolve => {
+        //     setTimeout(resolve, 0)
+        // })
     }
 
     revealHand() {
@@ -193,28 +217,34 @@ class Home2 extends React.Component {
                 setTimeout(() => {
                     if (this.state.gameStatus.split) {
                         if (this.state.pot1 === 0) {
-                            this.compareHand(handP2Val, handHVal, 2);
-                            this.nextRound();
+                            this.compareHand(handP2Val, handHVal, 2).then((resp) => {
+                                console.log(resp)
+                                this.nextRound();
+                            });
                         }
                         else if (this.state.pot2 === 0) {
-                            this.compareHand(handP1Val, handHVal, 1);
-                            this.nextRound();
+                            this.compareHand(handP1Val, handHVal, 1).then((resp) => {
+                                console.log(resp)
+                                this.nextRound();
+                            });
                         }
                         else {
-                            this.compareHand(handP2Val, handHVal, 2);
-                            setTimeout(() => {
+                            this.compareHand(handP2Val, handHVal, 2).then(() => {
                                 handHVal = this.getVal(this.state.hand.handH);
-                                this.compareHand(handP1Val, handHVal, 1);
-                                this.nextRound();
-                            }, 500);
-
+                                this.compareHand(handP1Val, handHVal, 1).then((resp) => {
+                                    console.log(resp)
+                                    this.nextRound();
+                                });
+                            });
                         }
                     }
                     else {
-                        this.compareHand(handP1Val, handHVal, 1);
-                        this.nextRound();
+                        this.compareHand(handP1Val, handHVal, 1).then((resp) => {
+                            console.log(resp)
+                            this.nextRound();
+                        });
                     }
-                    
+
                 }, 500)
             });
     }
