@@ -178,10 +178,20 @@ class Home2 extends React.Component {
         let actions = { 1: "1", 2: "2" };
         let P = await new Promise((resolve) => {
             if (dealerVal > playerVal) {
-                alert(`Dealer wins against Hand${handNum}! You lose $${pots[handNum]}!`);
-                this.setState((state, props) => ({ ...state, ["pot" + actions[handNum]]: 0 }));
+                if (dealerVal <= 21) {
+                    alert(`Dealer wins against Hand${handNum}! You lose $${pots[handNum]}!`);
+                    this.setState((state, props) => ({ ...state, ["pot" + actions[handNum]]: 0 }));
 
-                return resolve("loss");
+                    return resolve("loss");
+                }
+                else {
+                    alert(`Dealer BUST! You win $${pots[handNum]} for Hand ${handNum}!`);
+                    let newBank = this.state.bank + (2 * pots[handNum]);
+                    this.setState((state, props) => ({ ...state, bank: newBank, ["pot" + actions[handNum]]: 0 }));
+
+                    return resolve("dealer bust you win");
+                }
+
             }
             else {
                 if (dealerVal < 17) {
