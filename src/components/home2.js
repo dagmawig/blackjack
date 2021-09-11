@@ -114,15 +114,31 @@ class Home2 extends React.Component {
             this.setState((state, props) => ({ ...state, deckInstance: new Deck() }), () => {
                 let cards = new Array(this.state.deckInstance.deal(true), this.state.deckInstance.deal(false), this.state.deckInstance.deal(true), this.state.deckInstance.deal(true));
 
-                this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [cards[0], cards[2]], handH: [cards[1], cards[3]] }, gameStatus: { ...state.gameStatus, deal: true } }))
+                this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [cards[0], cards[2]], handH: [cards[1], cards[3]] }, gameStatus: { ...state.gameStatus, deal: true } }), () => {
+                    if (this.getVal([cards[0], cards[2]]) === 21) {
+                        setTimeout(() => {
+                            alert("BLACKJACK!!");
+                            this.revealHand();
+                        }, 500)
+                    }
+                })
             })
         }
         else {
             let cards = new Array(this.state.deckInstance.deal(true), this.state.deckInstance.deal(false), this.state.deckInstance.deal(true), this.state.deckInstance.deal(true));
 
-            this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [cards[0], cards[2]], handH: [cards[1], cards[3]] }, gameStatus: { ...state.gameStatus, deal: true } }))
+            this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [cards[0], cards[2]], handH: [cards[1], cards[3]] }, gameStatus: { ...state.gameStatus, deal: true } }), () => {
+                if (this.getVal([cards[0], cards[2]]) === 21) {
+                    setTimeout(() => {
+                        alert("BLACKJACK!!");
+                        this.revealHand();
+                    }, 500)
+                }
+            })
 
         }
+
+
     }
 
     split() {
@@ -135,7 +151,14 @@ class Home2 extends React.Component {
         this.setState((state, props) => ({ ...state, hand: newHand, bank: newBank, pot2: newPot, pArray: newPArray, gameStatus: { ...state.gameStatus, split: true } }), () => {
             setTimeout(() => {
                 let newCard = this.state.deckInstance.deal(true);
-                this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [...state.hand.handP1, newCard] } }))
+                this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [...state.hand.handP1, newCard] } }), () => {
+                    if (this.getVal(this.state.hand.handP1) === 21) {
+                        setTimeout(() => {
+                            alert("BLACKJACK!!");
+                            this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2 } }));
+                        }, 500)
+                    }
+                })
             }, 500)
         })
     }
@@ -259,7 +282,14 @@ class Home2 extends React.Component {
                         setTimeout(() => {
                             alert(`Hand 1 BUST! You lose $${this.state.pot1}!`);
                             let newCard = this.state.deckInstance.deal(true);
-                            this.setState((state, props) => ({ ...state, pot1: 0, gameStatus: { ...state.gameStatus, hand: 2 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }))
+                            this.setState((state, props) => ({ ...state, pot1: 0, gameStatus: { ...state.gameStatus, hand: 2 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
+                                if (this.getVal(this.state.hand.handP2) === 21) {
+                                    setTimeout(() => {
+                                        alert("BLACKJACK!!");
+                                        this.revealHand();
+                                    }, 500)
+                                }
+                            })
                         }, 500)
 
                     }
@@ -267,7 +297,14 @@ class Home2 extends React.Component {
                         setTimeout(() => {
                             alert(`You hit 21!`);
                             let newCard = this.state.deckInstance.deal(true);
-                            this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }))
+                            this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
+                                if (this.getVal(this.state.hand.handP2) === 21) {
+                                    setTimeout(() => {
+                                        alert("BLACKJACK!!");
+                                        this.revealHand();
+                                    }, 500)
+                                }
+                            })
                         }, 500)
                     }
                 });
@@ -326,7 +363,14 @@ class Home2 extends React.Component {
             if (this.state.gameStatus.hand === 2) this.revealHand();
             else {
                 let newCard = this.state.deckInstance.deal(true);
-                this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }));
+                this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
+                    if (this.getVal(this.state.hand.handP2) === 21) {
+                        setTimeout(() => {
+                            alert("BLACKJACK!!");
+                            this.revealHand();
+                        }, 500)
+                    }
+                });
             }
         }
     }
