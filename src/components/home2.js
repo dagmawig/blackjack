@@ -420,7 +420,9 @@ class Home2 extends React.Component {
                         </div>
                         <div className="dealer-hand-card col-6">
                             <div className="dealer-cards" style={{ width: 61.5 + (this.state.hand.handH.length - 1) * 11.5 }}>{handH}</div>
-
+                            {(this.state.hand.handH.length && this.state.hand.handH[0].faceUp) ? (<div className="dealer-hand-value">
+                                TOTAL: {this.getVal(this.state.hand.handH)}
+                            </div>) : null}
                         </div>
                     </div>
                     <div className="player-hand-row row">
@@ -429,9 +431,15 @@ class Home2 extends React.Component {
                         </div>
                         <div className="player-hand-card col-6">
                             {handP1}
+                            {(this.state.hand.handP1.length) ? (<div className="hand-value">
+                                TOTAL: {this.getVal(this.state.hand.handP1)}
+                            </div>) : null}
                         </div>
                         <div className="player-hand-card col-6">
                             {handP2}
+                            {(this.state.hand.handP2.length) ? (<div className="hand-value">
+                                TOTAL: {this.getVal(this.state.hand.handP2)}
+                            </div>) : null}
                         </div>
                     </div>
                     <div className="action-row row">
