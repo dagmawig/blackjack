@@ -36,6 +36,8 @@ let initialState = {
         deal: false,
         split: false,
         hand: 1,
+        op1: 1,
+        op2: 1,
     }
 };
 
@@ -148,7 +150,7 @@ class Home2 extends React.Component {
         let newPot = this.state.pot1;
         let newPArray = this.state.pArray.concat(getArray(this.state.pot1));
 
-        this.setState((state, props) => ({ ...state, hand: newHand, bank: newBank, pot2: newPot, pArray: newPArray, gameStatus: { ...state.gameStatus, split: true } }), () => {
+        this.setState((state, props) => ({ ...state, hand: newHand, bank: newBank, pot2: newPot, pArray: newPArray, gameStatus: { ...state.gameStatus, split: true, op2: 0.5 } }), () => {
             setTimeout(() => {
                 let newCard = this.state.deckInstance.deal(true);
                 this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [...state.hand.handP1, newCard] } }), () => {
@@ -156,7 +158,7 @@ class Home2 extends React.Component {
                         setTimeout(() => {
                             alert("BLACKJACK!!");
                             let newCard = this.state.deckInstance.deal(true);
-                            this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2 }, hand: {...state.hand, handP2: [...state.hand.handP2, newCard]} }), () => {
+                            this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2, op1: 0.5, op2: 1 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
                                 if (this.getVal(this.state.hand.handP2) === 21) {
                                     alert("BLACKJACK!!");
                                     this.revealHand();
@@ -257,29 +259,29 @@ class Home2 extends React.Component {
                     if (this.state.gameStatus.split) {
                         if (this.state.pot1 === 0) {
                             this.compareHand(handP2Val, handHVal, 2).then((resp) => {
-                                console.log(resp)
                                 this.nextRound();
                             });
                         }
                         else if (this.state.pot2 === 0) {
-                            this.compareHand(handP1Val, handHVal, 1).then((resp) => {
-                                console.log(resp)
-                                this.nextRound();
-                            });
+                            this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, op2: 0.5, op1: 1 } }), () => {
+                                this.compareHand(handP1Val, handHVal, 1).then((resp) => {
+                                    this.nextRound();
+                                });
+                            })
                         }
                         else {
                             this.compareHand(handP2Val, handHVal, 2).then(() => {
                                 handHVal = this.getVal(this.state.hand.handH);
-                                this.compareHand(handP1Val, handHVal, 1).then((resp) => {
-                                    console.log(resp)
-                                    this.nextRound();
-                                });
+                                this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, op2: 0.5, op1: 1 } }), () => {
+                                    this.compareHand(handP1Val, handHVal, 1).then((resp) => {
+                                        this.nextRound();
+                                    });
+                                })
                             });
                         }
                     }
                     else {
                         this.compareHand(handP1Val, handHVal, 1).then((resp) => {
-                            console.log(resp)
                             this.nextRound();
                         });
                     }
@@ -293,12 +295,11 @@ class Home2 extends React.Component {
             if (this.state.gameStatus.hand === 1) {
                 let newHand = this.state.hand.handP1.concat([this.state.deckInstance.deal(true)]);
                 this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: newHand } }), () => {
-                    console.log(this.state.hand.handP1)
                     if (this.getVal(newHand) > 21) {
                         setTimeout(() => {
                             alert(`Hand 1 BUST! You lose $${this.state.pot1}!`);
                             let newCard = this.state.deckInstance.deal(true);
-                            this.setState((state, props) => ({ ...state, pot1: 0, gameStatus: { ...state.gameStatus, hand: 2 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
+                            this.setState((state, props) => ({ ...state, pot1: 0, gameStatus: { ...state.gameStatus, hand: 2, op1: 0.5, op2: 1 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
                                 if (this.getVal(this.state.hand.handP2) === 21) {
                                     setTimeout(() => {
                                         alert("BLACKJACK!!");
@@ -313,7 +314,7 @@ class Home2 extends React.Component {
                         setTimeout(() => {
                             alert(`You hit 21!`);
                             let newCard = this.state.deckInstance.deal(true);
-                            this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
+                            this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2, op1: 0.5, op2: 1 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
                                 if (this.getVal(this.state.hand.handP2) === 21) {
                                     setTimeout(() => {
                                         alert("BLACKJACK!!");
@@ -379,7 +380,7 @@ class Home2 extends React.Component {
             if (this.state.gameStatus.hand === 2) this.revealHand();
             else {
                 let newCard = this.state.deckInstance.deal(true);
-                this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
+                this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2, op1: 0.5, op2: 1 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
                     if (this.getVal(this.state.hand.handP2) === 21) {
                         setTimeout(() => {
                             alert("BLACKJACK!!");
@@ -395,12 +396,12 @@ class Home2 extends React.Component {
 
         let handP1 = this.state.hand.handP1.map((card, i) => {
             return (
-                <Card card={card} key={i + 'p0card'} />
+                <Card card={card} key={i + 'p0card'} opacity={this.state.gameStatus.op1} />
             )
         });
         let handP2 = this.state.hand.handP2.map((card, i) => {
             return (
-                <Card card={card} key={i + 'p1card'} />
+                <Card card={card} key={i + 'p1card'} opacity={this.state.gameStatus.op2} />
             )
         });
         let handH = this.state.hand.handH.map((card, i) => {
@@ -441,7 +442,7 @@ class Home2 extends React.Component {
                                 TOTAL: {this.getVal(this.state.hand.handP1)}
                             </div>) : null}
                             {(this.state.hand.handP1.length) ? (<div className="player-hand-value">
-                                VALUE: {(this.getVal(this.state.hand.handP1)<=21)? <span>${this.state.pot1}</span> : <span>BUST!</span>}
+                                VALUE: {(this.getVal(this.state.hand.handP1) <= 21) ? <span>${this.state.pot1}</span> : <span>BUST!</span>}
                             </div>) : null}
                         </div>
                         <div className="player-hand-card col-6">
@@ -450,7 +451,7 @@ class Home2 extends React.Component {
                                 TOTAL: {this.getVal(this.state.hand.handP2)}
                             </div>) : null}
                             {(this.state.hand.handP2.length) ? (<div className="player-hand-value">
-                                VALUE: {(this.getVal(this.state.hand.handP2)<=21)? <span>${this.state.pot2}</span> : <span>BUST!</span>}
+                                VALUE: {(this.getVal(this.state.hand.handP2) <= 21) ? <span>${this.state.pot2}</span> : <span>BUST!</span>}
                             </div>) : null}
                         </div>
                     </div>
