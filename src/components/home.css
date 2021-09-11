@@ -37,7 +37,7 @@
     margin: 5px 0px;
     align-items: flex-start;
     justify-content: space-between; 
-    height: 150px;
+    height: 160px;
     border: 2px solid red;
 }
 .action-row {
@@ -90,4 +90,12 @@ font-weight: bold;
 }
 .dealer-hand-total {
     text-align: center;
+}
+.player-hand-total {
+    padding: 0;
+    line-height: 1;
+}
+.player-hand-value {
+    padding: 0;
+    line-height: 1;
 }

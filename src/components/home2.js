@@ -155,7 +155,13 @@ class Home2 extends React.Component {
                     if (this.getVal(this.state.hand.handP1) === 21) {
                         setTimeout(() => {
                             alert("BLACKJACK!!");
-                            this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2 } }));
+                            let newCard = this.state.deckInstance.deal(true);
+                            this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2 }, hand: {...state.hand, handP2: [...state.hand.handP2, newCard]} }), () => {
+                                if (this.getVal(this.state.hand.handP2) === 21) {
+                                    alert("BLACKJACK!!");
+                                    this.revealHand();
+                                }
+                            });
                         }, 500)
                     }
                 })
@@ -434,11 +440,17 @@ class Home2 extends React.Component {
                             {(this.state.hand.handP1.length) ? (<div className="player-hand-total">
                                 TOTAL: {this.getVal(this.state.hand.handP1)}
                             </div>) : null}
+                            {(this.state.hand.handP1.length) ? (<div className="player-hand-value">
+                                VALUE: {(this.getVal(this.state.hand.handP1)<=21)? <span>${this.state.pot1}</span> : <span>BUST!</span>}
+                            </div>) : null}
                         </div>
                         <div className="player-hand-card col-6">
                             {handP2}
                             {(this.state.hand.handP2.length) ? (<div className="player-hand-total">
                                 TOTAL: {this.getVal(this.state.hand.handP2)}
+                            </div>) : null}
+                            {(this.state.hand.handP2.length) ? (<div className="player-hand-value">
+                                VALUE: {(this.getVal(this.state.hand.handP2)<=21)? <span>${this.state.pot2}</span> : <span>BUST!</span>}
                             </div>) : null}
                         </div>
                     </div>
