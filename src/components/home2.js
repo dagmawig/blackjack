@@ -177,7 +177,7 @@ class Home2 extends React.Component {
     nextRound() {
         if (this.state.bank === 0) {
             alert("Game Over!!");
-            this.setState({ ...initialState });
+            this.setState({ ...initialState, deckInstance: new Deck() });
         }
         else {
             this.setState((state, props) => ({ ...state, hand: { ...initialState.hand }, pot1: 0, pot2: 0, pArray: [], gameStatus: { ...initialState.gameStatus } }))
