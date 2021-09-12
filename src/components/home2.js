@@ -9,9 +9,11 @@ import { getArray } from './bank';
 
 function Double(props) {
     let pots = props.pots;
-    if (pots[props.hand] <= props.bank) {
+    let hand = props.hand;
+    let status = props.gameStatus.hand;
+    if (pots[status] <= props.bank && hand["handP" + status].length === 2) {
         return (
-            <button className="btn btn-success col-4" >(2X)Double </button>
+            <button className="btn btn-success col-4" onClick={props.double} >(2X)Double </button>
         )
     }
     else return null;
@@ -19,7 +21,7 @@ function Double(props) {
 function Action(props) {
     if (props.deal) {
         return (
-            <><button className="btn btn-success col-3" onClick={props.hit}><i className="fa fa-plus-square-o" aria-hidden="true"></i> Hit</button> <Double pots={props.pots} hand={props.hand} bank={props.bank} /> <button className="btn btn-success col-4" onClick={props.stand}><i className="fa fa-hand-paper-o" aria-hidden="true"></i> Stand </button></>
+            <><button className="btn btn-success col-3" onClick={props.hit}><i className="fa fa-plus-square-o" aria-hidden="true"></i> Hit</button> <Double pots={props.pots} gameStatus={props.gameStatus} hand={props.hand} bank={props.bank} double={props.double} /> <button className="btn btn-success col-4" onClick={props.stand}><i className="fa fa-hand-paper-o" aria-hidden="true"></i> Stand </button></>
         )
     }
     else return null;
@@ -59,6 +61,7 @@ class Home2 extends React.Component {
         this.clearBet = this.clearBet.bind(this);
         this.remove = this.remove.bind(this);
         this.stand = this.stand.bind(this);
+        this.double = this.double.bind(this);
     }
 
     bet(e) {
@@ -273,9 +276,11 @@ class Home2 extends React.Component {
                             this.compareHand(handP2Val, handHVal, 2).then(() => {
                                 handHVal = this.getVal(this.state.hand.handH);
                                 this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, op2: 0.5, op1: 1 } }), () => {
-                                    this.compareHand(handP1Val, handHVal, 1).then((resp) => {
-                                        this.nextRound();
-                                    });
+                                    setTimeout(() => {
+                                        this.compareHand(handP1Val, handHVal, 1).then((resp) => {
+                                            this.nextRound();
+                                        });
+                                    }, 500)
                                 })
                             });
                         }
@@ -285,7 +290,6 @@ class Home2 extends React.Component {
                             this.nextRound();
                         });
                     }
-
                 }, 500)
             });
     }
@@ -334,7 +338,11 @@ class Home2 extends React.Component {
                         setTimeout(() => {
                             alert(`Hand 2 BUST! You lose $${this.state.pot2}!`);
                             this.setState((state, props) => ({ ...state, pot2: 0 }), () => {
-                                if (this.state.pot1) this.revealHand();
+                                if (this.state.pot1) {
+                                    this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, op1: 1, op2: 0.5 } }), () => {
+                                        this.revealHand();
+                                    })
+                                }
                                 else {
                                     this.nextRound();
                                 }
@@ -389,6 +397,106 @@ class Home2 extends React.Component {
                     }
                 });
             }
+        }
+    }
+
+    double() {
+        if (this.state.gameStatus.split) {
+            if (this.state.gameStatus.hand === 1) {
+                let newCard = this.state.deckInstance.deal(true);
+                let newPot = 2 * this.state.pot1;
+                let newBank = this.state.bank - this.state.pot1;
+                this.setState((state, props) => ({ ...state, pot1: newPot, bank: newBank, hand: { ...state.hand, handP1: [...state.hand.handP1, newCard] } }), () => {
+                    if (this.getVal(this.state.hand.handP1) >= 21) {
+                        setTimeout(() => {
+                            if (this.getVal(this.state.hand.handP1) > 21) {
+                                alert(`Hand 1 BUST! You lose $${this.state.pot1}!`);
+                                let newCard = this.state.deckInstance.deal(true);
+                                this.setState((state, props) => ({ ...state, pot1: 0, gameStatus: { ...state.gameStatus, hand: 2, op1: 0.5, op2: 1 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
+                                    if (this.getVal(this.state.hand.handP2) === 21) {
+                                        setTimeout(() => {
+                                            alert("BLACKJACK!!");
+                                            this.revealHand();
+                                        }, 500)
+                                    }
+                                })
+                            }
+                            else if (this.getVal(this.state.hand.handP1) === 21) {
+                                alert(`You hit 21!`);
+                                let newCard = this.state.deckInstance.deal(true);
+                                this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2, op1: 0.5, op2: 1 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
+                                    if (this.getVal(this.state.hand.handP2) === 21) {
+                                        setTimeout(() => {
+                                            alert("BLACKJACK!!");
+                                            this.revealHand();
+                                        }, 500)
+                                    }
+                                })
+                            }
+                        }, 500)
+                    }
+                    else {
+                        let newCard = this.state.deckInstance.deal(true);
+                        this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, hand: 2, op1: 0.5, op2: 1 }, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
+                            if (this.getVal(this.state.hand.handP2) === 21) {
+                                setTimeout(() => {
+                                    alert("BLACKJACK!!");
+                                    this.revealHand();
+                                }, 500)
+                            }
+                        })
+                    }
+                })
+            }
+            else if (this.state.gameStatus.hand === 2) {
+                let newCard = this.state.deckInstance.deal(true);
+                let newPot = 2 * this.state.pot2;
+                let newBank = this.state.bank - this.state.pot2;
+                this.setState((state, props) => ({ ...state, pot2: newPot, bank: newBank, hand: { ...state.hand, handP2: [...state.hand.handP2, newCard] } }), () => {
+                    if (this.getVal(this.state.hand.handP2) >= 21) {
+                        setTimeout(() => {
+                            if (this.getVal(this.state.hand.handP2) > 21) {
+                                alert(`Hand 2 BUST! You lose $${this.state.pot2}!`);
+                                this.setState((state, props) => ({ ...state, pot2: 0 }), () => {
+                                    if (this.state.pot1) {
+                                        this.setState((state, props) => ({ ...state, gameStatus: { ...state.gameStatus, op1: 1, op2: 0.5 } }), () => {
+                                            this.revealHand();
+                                        })
+                                    }
+                                    else {
+                                        this.nextRound();
+                                    }
+                                })
+                            }
+                            else if (this.getVal(this.state.hand.handP2) === 21) {
+                                alert(`You hit 21!`);
+                                this.revealHand();
+                            }
+                        }, 500)
+                    }
+                })
+            }
+        }
+        else if (!this.state.gameStatus.split) {
+            let newCard = this.state.deckInstance.deal(true);
+            let newPot = 2 * this.state.pot1;
+            let newBank = this.state.bank - this.state.pot1;
+            this.setState((state, props) => ({ ...state, pot1: newPot, bank: newBank, hand: { ...state.hand, handP1: [...state.hand.handP1, newCard] } }), () => {
+                if (this.getVal(this.state.hand.handP1) >= 21) {
+                    setTimeout(() => {
+                        if (this.getVal(this.state.hand.handP1) > 21) {
+                            alert(`Hand 1 BUST! You lose $${this.state.pot1}!`);
+                            this.setState((state, props) => ({ ...state, pot1: 0 }), () => {
+                                this.nextRound();
+                            })
+                        }
+                        else if (this.getVal(this.state.hand.handP1) === 21) {
+                            alert(`You hit 21!`);
+                            this.revealHand();
+                        }
+                    }, 500)
+                }
+            })
         }
     }
 
@@ -457,7 +565,7 @@ class Home2 extends React.Component {
                     </div>
                     <div className="action-row row">
                         {(!this.state.gameStatus.deal && this.state.pot1) ? (<button className="btn btn-info col-3" onClick={this.deal}>Deal</button>) : null}
-                        <Action pots={{ 1: this.state.pot1, 2: this.state.pot2 }} hand={this.state.gameStatus.hand} bank={this.state.bank} deal={this.state.gameStatus.deal} hit={this.hit} stand={this.stand} />
+                        <Action pots={{ 1: this.state.pot1, 2: this.state.pot2 }} gameStatus={this.state.gameStatus} hand={this.state.hand} bank={this.state.bank} deal={this.state.gameStatus.deal} hit={this.hit} stand={this.stand} double={this.double} />
                         {(this.isSplit()) ? <button className="splt-btn btn btn-success col-7" onClick={this.split} >Split</button> : null}
                     </div>
                     <div className="pot-row row">
