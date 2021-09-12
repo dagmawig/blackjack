@@ -522,6 +522,9 @@ class Home2 extends React.Component {
             <div className="home container">
                 <div className="home-items">
                     <div className="deck-row row">
+                        <div className="game-banner col-7">
+                            <img alt="game banner" height={35} width={180} src={"/images/banner.png"}/>
+                        </div>
                         <div className="deck-pic col-2">
                             <img alt="deck dummy" width={30} height={35} src={"/images/dummy.png"} />
                         </div>
