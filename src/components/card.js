@@ -1,6 +1,8 @@
 import './card.css'
 import React from 'react';
 
+
+// function that returns a playing card component.
 function Card(props) {
     let id = props.card.value + props.card.suit;
     let faceUp = props.card.faceUp;

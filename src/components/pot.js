@@ -1,4 +1,6 @@
 import './pot.css';
+
+// returns a coponent showing the stack of chips and thier total value.
 function Pot(props) {
 
     let pot = props.pot;

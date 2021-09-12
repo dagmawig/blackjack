@@ -1,3 +1,5 @@
+// function that acts as a class for deck of cards.
+
 function Deck(){
     this.deck = newDeck();
     this.burn = [];

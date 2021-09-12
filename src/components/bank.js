@@ -1,5 +1,7 @@
 import './bank.css';
 
+
+// function that outputs array of vlaues where each value is the worth of a chip in a stack of chips.
 export let getArray = (money) =>{
 
     let hundreds = Math.floor(money / 100);
@@ -25,6 +27,7 @@ export let getArray = (money) =>{
     return mArray;
 }
 
+// function returns the bank component of the game.
 function Bank(props) {
 
     let bank = props.bank;
