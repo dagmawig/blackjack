@@ -33,6 +33,7 @@ let initialState = {
     bank: 900,
     pot1: 100,
     pot2: 0,
+    lastBet: 100,
     pArray: [100],
     gameStatus: {
         deal: false,
@@ -119,7 +120,7 @@ class Home2 extends React.Component {
             this.setState((state, props) => ({ ...state, deckInstance: new Deck() }), () => {
                 let cards = new Array(this.state.deckInstance.deal(true), this.state.deckInstance.deal(false), this.state.deckInstance.deal(true), this.state.deckInstance.deal(true));
 
-                this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [cards[0], cards[2]], handH: [cards[1], cards[3]] }, gameStatus: { ...state.gameStatus, deal: true } }), () => {
+                this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [cards[0], cards[2]], handH: [cards[1], cards[3]] }, gameStatus: { ...state.gameStatus, deal: true }, lastBet: state.pot1 }), () => {
                     if (this.getVal([cards[0], cards[2]]) === 21) {
                         setTimeout(() => {
                             alert("BLACKJACK!!");
@@ -132,7 +133,7 @@ class Home2 extends React.Component {
         else {
             let cards = new Array(this.state.deckInstance.deal(true), this.state.deckInstance.deal(false), this.state.deckInstance.deal(true), this.state.deckInstance.deal(true));
 
-            this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [cards[0], cards[2]], handH: [cards[1], cards[3]] }, gameStatus: { ...state.gameStatus, deal: true } }), () => {
+            this.setState((state, props) => ({ ...state, hand: { ...state.hand, handP1: [cards[0], cards[2]], handH: [cards[1], cards[3]] }, gameStatus: { ...state.gameStatus, deal: true }, lastBet: state.pot1 }), () => {
                 if (this.getVal([cards[0], cards[2]]) === 21) {
                     setTimeout(() => {
                         alert("BLACKJACK!!");
@@ -180,7 +181,11 @@ class Home2 extends React.Component {
             this.setState({ ...initialState, deckInstance: new Deck() });
         }
         else {
-            this.setState((state, props) => ({ ...state, hand: { ...initialState.hand }, pot1: 0, pot2: 0, pArray: [], gameStatus: { ...initialState.gameStatus } }))
+            
+            let newBet = (this.state.lastBet<=this.state.bank)? this.state.lastBet : this.state.bank;
+            let pArray = getArray(newBet);
+            let newBank = this.state.bank - newBet;
+            this.setState((state, props) => ({ ...state, hand: { ...initialState.hand }, pot1: newBet, pot2: 0, bank: newBank, pArray: pArray, gameStatus: { ...initialState.gameStatus } }))
         }
     }
 
