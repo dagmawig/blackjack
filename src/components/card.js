@@ -6,9 +6,9 @@ function Card(props) {
     let faceUp = props.card.faceUp;
     let opacity = props.opacity;
     return (faceUp)? (
-        <img alt='card' className="play-card" width={61.5} height={87.8} src={"/images/"+id+".png"} style={{opacity: opacity}} ></img>
+        <img alt='card' className="play-card" width={61.5} height={87.8} src={process.env.PUBLIC_URL +"/images/"+id+".png"} style={{opacity: opacity}} ></img>
     ) : (
-    <img alt='card' className="play-card" width={61.5} height={87.8} src={"/images/back.png"} ></img>
+    <img alt='card' className="play-card" width={61.5} height={87.8} src={process.env.PUBLIC_URL +"/images/back.png"} ></img>
     );
 };
 

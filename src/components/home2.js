@@ -523,10 +523,10 @@ class Home2 extends React.Component {
                 <div className="home-items">
                     <div className="deck-row row">
                         <div className="game-banner col-7">
-                            <img alt="game banner" height={35} width={180} src={"/images/banner.png"}/>
+                            <img alt="game banner" height={35} width={180} src={process.env.PUBLIC_URL +"/images/banner.png"}/>
                         </div>
                         <div className="deck-pic col-2">
-                            <img alt="deck dummy" width={30} height={35} src={"/images/dummy.png"} />
+                            <img alt="deck dummy" width={30} height={35} src={process.env.PUBLIC_URL +"/images/dummy.png"} />
                         </div>
                         <div className="total-number col-3" style={{ color: "white" }}>
                             {this.state.deckInstance.getDeck().length}

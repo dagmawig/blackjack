@@ -51,19 +51,19 @@ function Bank(props) {
                 </div>
             </div>
             {(bank > 0) ? (<div className="bank-chip col-3">
-                <input type="image" src={"/images/1.png"} width={width} height={height} value={1} onClick={bet} className="chip btn"></input>
+                <input type="image" src={process.env.PUBLIC_URL +"/images/1.png"} width={width} height={height} value={1} onClick={bet} className="chip btn"></input>
             </div>) : null}
             {(bank >= 5) ? (<div className="bank-chip col-3">
-                <input type="image" src={"/images/5.png"} width={width} height={height} value={5} onClick={bet} className="chip btn"></input>
+                <input type="image" src={process.env.PUBLIC_URL +"/images/5.png"} width={width} height={height} value={5} onClick={bet} className="chip btn"></input>
             </div>) : null}
             {(bank >= 25) ? (<div className="bank-chip col-3">
-                <input type="image" src={"/images/25.png"} width={width} height={height} value={25} onClick={bet} className="chip btn"></input>
+                <input type="image" src={process.env.PUBLIC_URL +"/images/25.png"} width={width} height={height} value={25} onClick={bet} className="chip btn"></input>
             </div>) : null}
             {(bank >= 50) ? (<div className="bank-chip col-3">
-                <input type="image" src={"/images/50.png"} width={width} height={height} value={50} onClick={bet} className="chip btn"></input>
+                <input type="image" src={process.env.PUBLIC_URL +"/images/50.png"} width={width} height={height} value={50} onClick={bet} className="chip btn"></input>
             </div>) : null}
             {(bank >= 100) ? (<div className="bank-chip col-3">
-                <input type="image" src={"/images/100.png"} width={width} height={height} value={100} onClick={bet} className="chip-1 btn"></input>
+                <input type="image" src={process.env.PUBLIC_URL +"/images/100.png"} width={width} height={height} value={100} onClick={bet} className="chip-1 btn"></input>
             </div>) : null}
         </>
     )
