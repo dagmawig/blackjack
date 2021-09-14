@@ -5,4 +5,4 @@ This app simulates a blackjack game.
 
 
 ### Services and Functions Used
-I used the React to make the game.
+I used React to make the game.
