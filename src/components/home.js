@@ -497,6 +497,11 @@ class Home extends React.Component {
                             }
                         }, 500)
                     }
+                    else {
+                        setTimeout(() => {
+                            this.revealHand();
+                        }, 500)
+                    }
                 })
             }
         }
@@ -517,6 +522,11 @@ class Home extends React.Component {
                             alert(`You hit 21!`);
                             this.revealHand();
                         }
+                    }, 500)
+                }
+                else {
+                    setTimeout(() => {
+                        this.revealHand();
                     }, 500)
                 }
             })
